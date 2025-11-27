@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2196F3">
+    <title>📦 Weryfikacja WM - Mobile</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .wm-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .wm-selector h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .wm-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .wm-input input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .wm-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .wm-input button {
+            padding: 15px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .wm-input button:active {
+            background: #5568d3;
+        }
+        
+        .recent-wm {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .recent-wm button {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .recent-wm button:active {
+            background: #e0e0e0;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .stat-item.success .stat-value { color: #4caf50; }
+        .stat-item.pending .stat-value { color: #ff9800; }
+        .stat-item.error .stat-value { color: #f44336; }
+        
+        .progress-bar {
+            height: 40px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .items-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .items-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .item-card {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+        
+        .item-card:last-child {
+            border-bottom: none;
+        }
+        
+        .item-card.completed {
+            background: #f1f8f4;
+        }
+        
+        .item-card.partial {
+            background: #fff8e1;
+        }
+        
+        .item-card.pending {
+            background: #fff;
+        }
+        
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .item-status {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .item-status.completed { background: #4caf50; }
+        .item-status.partial { background: #ff9800; }
+        .item-status.pending { background: #e0e0e0; }
+        
+        .item-name {
+            flex: 1;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .item-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: 42px;
+        }
+        
+        .item-quantity {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .item-quantity .current {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .scan-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 560px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .scan-button:active {
+            transform: translateX(-50%) scale(0.98);
+        }
+        
+        .camera-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .camera-view.active {
+            display: flex;
+        }
+        
+        .camera-header {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .camera-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        
+        #video {
+            flex: 1;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .scan-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 300px;
+            height: 200px;
+            border: 3px solid #4caf50;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+        
+        .scan-result {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 3000;
+            display: none;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .scan-result.show {
+            display: block;
+            animation: popIn 0.3s ease;
+        }
+        
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .scan-result .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .scan-result .message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .scan-result .details {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>📦 Weryfikacja WM</h1>
+        <div class="subtitle">Mobilny skaner magazynowy</div>
+    </div>
+    
+    <!-- Container -->
+    <div class="container">
+        <!-- WM Selector -->
+        <div class="wm-selector" id="wmSelector">
+            <h2>🔍 Wybierz dokument WM</h2>
+            <div class="wm-input">
+                <input type="text" id="wmInput" placeholder="WM-xxxx" value="WM-690">
+                <button onclick="loadWM()">Załaduj</button>
+            </div>
+            <div class="recent-wm">
+                <button onclick="quickLoadWM('WM-690')">WM-690</button>
+                <button onclick="quickLoadWM('WM-4126')">WM-4126</button>
+                <button onclick="quickLoadWM('WM-1848')">WM-1848</button>
+            </div>
+        </div>
+        
+        <!-- Stats (hidden initially) -->
+        <div class="stats-card hidden" id="statsCard">
+            <div class="stats-grid">
+                <div class="stat-item success">
+                    <div class="stat-value" id="statCompleted">0</div>
+                    <div class="stat-label">Wydane</div>
+                </div>
+                <div class="stat-item pending">
+                    <div class="stat-value" id="statPending">0</div>
+                    <div class="stat-label">Pozostałe</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Razem</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+            </div>
+        </div>
+        
+        <!-- Items List (hidden initially) -->
+        <div class="items-list hidden" id="itemsList">
+            <div class="items-header" id="itemsHeader">📋 Pozycje dokumentu</div>
+            <div id="itemsContainer"></div>
+        </div>
+    </div>
+    
+    <!-- Scan Button (hidden initially) -->
+    <button class="scan-button hidden" id="scanButton" onclick="startScanning()">
+        📷 Skanuj kolejny kod
+    </button>
+    
+    <!-- Camera View -->
+    <div class="camera-view" id="cameraView">
+        <div class="camera-header">
+            <h2>Skanowanie kodu</h2>
+            <button class="camera-close" onclick="stopScanning()">✕</button>
+        </div>
+        <video id="video" autoplay playsinline></video>
+        <div class="scan-overlay"></div>
+    </div>
+    
+    <!-- Scan Result Popup -->
+    <div class="scan-result" id="scanResult">
+        <div class="icon" id="resultIcon">✅</div>
+        <div class="message" id="resultMessage">Zeskanowano!</div>
+        <div class="details" id="resultDetails"></div>
+    </div>
+    
+    <!-- ZXing Library for barcode scanning -->
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    
+    <script>
+        // Demo data - symulacja bazy danych
+        const DEMO_DATA = {
+            'WM-690': [
+                { id: 1, name: 'Lozysko stozkowe 30222 J2', ean: '7316577327024', required: 6.0, scanned: 0 },
+                { id: 2, name: 'PHG XPA1250EP', ean: '7316579573795', required: 5.0, scanned: 0 },
+                { id: 3, name: 'PHG AX28EP', ean: '7316579570084', required: 5.0, scanned: 0 },
+                { id: 4, name: 'PHG XPA1000EP', ean: '7316579573658', required: 1.0, scanned: 0 },
+                { id: 5, name: '6203-2RSR C3', ean: '7316577008091', required: 2.0, scanned: 0 }
+            ],
+            'WM-4126': [
+                { id: 1, name: 'Pas klinowy PHG XPA1250EP', ean: '7316579573795', required: 5.0, scanned: 0 },
+                { id: 2, name: 'Pas klinowy PHG AX28EP', ean: '7316579570084', required: 5.0, scanned: 0 },
+                { id: 3, name: 'PHG XPA1000EP', ean: '7316579573658', required: 1.0, scanned: 0 }
+            ],
+            'WM-1848': [
+                { id: 1, name: '6001-2ZR C3', ean: '7316577002501', required: 3.0, scanned: 0 },
+                { id: 2, name: 'ZVL SLOVAKIA 6203-2RSR C3', ean: 'N/A', required: 5.0, scanned: 0 },
+                { id: 3, name: 'ZVL SLOVAKIA 6201-2RSR C3', ean: 'N/A', required: 4.0, scanned: 0 }
+            ]
+        };
+        
+        let currentWM = null;
+        let currentItems = [];
+        let codeReader = null;
+        let scanning = false;
+        
+        // Load WM data
+        function loadWM() {
+            const wmNumber = document.getElementById('wmInput').value.trim().toUpperCase();
+            
+            if (!wmNumber) {
+                alert('Wpisz numer WM!');
+                return;
+            }
+            
+            if (!DEMO_DATA[wmNumber]) {
+                alert(`Nie znaleziono dokumentu: ${wmNumber}\n\nDostępne demo:\n- WM-690\n- WM-4126\n- WM-1848`);
+                return;
+            }
+            
+            currentWM = wmNumber;
+            currentItems = JSON.parse(JSON.stringify(DEMO_DATA[wmNumber])); // Deep copy
+            
+            renderItems();
+            updateStats();
+            
+            // Show elements
+            document.getElementById('statsCard').classList.remove('hidden');
+            document.getElementById('itemsList').classList.remove('hidden');
+            document.getElementById('scanButton').classList.remove('hidden');
+            
+            // Update header
+            document.getElementById('itemsHeader').textContent = `📋 ${wmNumber} - Pozycje dokumentu`;
+        }
+        
+        function quickLoadWM(wmNumber) {
+            document.getElementById('wmInput').value = wmNumber;
+            loadWM();
+        }
+        
+        // Render items
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+            
+            currentItems.forEach(item => {
+                const status = item.scanned >= item.required ? 'completed' : 
+                              item.scanned > 0 ? 'partial' : 'pending';
+                
+                const statusIcon = status === 'completed' ? '✅' :
+                                  status === 'partial' ? '⏳' : '❌';
+                
+                const card = document.createElement('div');
+                card.className = `item-card ${status}`;
+                card.innerHTML = `
+                    <div class="item-header">
+                        <div class="item-status ${status}">${statusIcon}</div>
+                        <div class="item-name">${item.name}</div>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-quantity">
+                            <span class="current">${item.scanned}</span> / ${item.required}
+                        </div>
+                        <div style="font-size: 12px; color: #999;">
+                            ${item.ean !== 'N/A' ? `EAN: ${item.ean}` : 'Kod QR'}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const completed = currentItems.filter(i => i.scanned >= i.required).length;
+            const total = currentItems.length;
+            const pending = total - completed;
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statPending').textContent = pending;
+            document.getElementById('statTotal').textContent = total;
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = progress + '%';
+            progressFill.textContent = progress + '%';
+        }
+        
+        // Start scanning
+        async function startScanning() {
+            if (scanning) return;
+            
+            scanning = true;
+            document.getElementById('cameraView').classList.add('active');
+            
+            try {
+                codeReader = new ZXing.BrowserMultiFormatReader();
+                
+                const videoElement = document.getElementById('video');
+                
+                await codeReader.decodeFromVideoDevice(null, videoElement, (result, err) => {
+                    if (result) {
+                        handleScan(result.text);
+                    }
+                });
+            } catch (err) {
+                console.error('Camera error:', err);
+                alert('Nie można uruchomić kamery. Sprawdź uprawnienia.');
+                stopScanning();
+            }
+        }
+        
+        // Stop scanning
+        function stopScanning() {
+            scanning = false;
+            document.getElementById('cameraView').classList.remove('active');
+            
+            if (codeReader) {
+                codeReader.reset();
+                codeReader = null;
+            }
+        }
+        
+        // Handle scanned code
+        function handleScan(code) {
+            console.log('Scanned:', code);
+            
+            // Find item by EAN
+            const item = currentItems.find(i => i.ean === code);
+            
+            if (!item) {
+                showScanResult('❌', 'Nieznany kod', `EAN: ${code}\n\nTen kod nie należy do dokumentu ${currentWM}`);
+                setTimeout(() => hideScanResult(), 2000);
+                return;
+            }
+            
+            // Update scanned quantity
+            if (item.scanned < item.required) {
+                item.scanned += 1;
+                
+                const remaining = item.required - item.scanned;
+                const message = item.scanned >= item.required ? 
+                    'Pozycja kompletna!' : 
+                    `Zeskanowano: ${item.scanned}/${item.required}`;
+                const details = item.scanned >= item.required ?
+                    `✅ ${item.name}` :
+                    `⏳ ${item.name}\nPozostało: ${remaining} szt`;
+                
+                showScanResult('✅', message, details);
+                
+                // Update UI
+                renderItems();
+                updateStats();
+                
+                // Vibrate
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
+                
+                // Auto-hide after 1.5s and continue scanning
+                setTimeout(() => {
+                    hideScanResult();
+                }, 1500);
+            } else {
+                showScanResult('⚠️', 'Już wydane', `${item.name}\n\nTa pozycja jest już kompletna (${item.required}/${item.required})`);
+                setTimeout(() => hideScanResult(), 2000);
+            }
+        }
+        
+        function showScanResult(icon, message, details) {
+            document.getElementById('resultIcon').textContent = icon;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultDetails').textContent = details;
+            document.getElementById('scanResult').classList.add('show');
+        }
+        
+        function hideScanResult() {
+            document.getElementById('scanResult').classList.remove('show');
+        }
+        
+        // Keyboard shortcuts for testing (desktop)
+        document.addEventListener('keypress', (e) => {
+            if (!currentWM) return;
+            
+            // Simulate scanning with number keys
+            const key = e.key;
+            if (key >= '1' && key <= '9') {
+                const index = parseInt(key) - 1;
+                if (index < currentItems.length) {
+                    const item = currentItems[index];
+                    if (item.ean !== 'N/A') {
+                        handleScan(item.ean);
+                    }
+                }
+            }
+        });
+        
+        // Auto-load demo on start
+        window.addEventListener('load', () => {
+            // Auto-load WM-690 for demo
+            setTimeout(() => {
+                quickLoadWM('WM-690');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
