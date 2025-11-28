@@ -1,709 +1,493 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#2196F3">
-    <title>📦 Weryfikacja WM - Mobile</title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
-            padding-bottom: 80px;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .header .subtitle {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .container {
-            padding: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .wm-selector {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .wm-selector h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .wm-input {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .wm-input input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-        
-        .wm-input input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .wm-input button {
-            padding: 15px 25px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .wm-input button:active {
-            background: #5568d3;
-        }
-        
-        .recent-wm {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .recent-wm button {
-            padding: 8px 15px;
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        
-        .recent-wm button:active {
-            background: #e0e0e0;
-        }
-        
-        .stats-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-        
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-        }
-        
-        .stat-item.success .stat-value { color: #4caf50; }
-        .stat-item.pending .stat-value { color: #ff9800; }
-        .stat-item.error .stat-value { color: #f44336; }
-        
-        .progress-bar {
-            height: 40px;
-            background: #e0e0e0;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4caf50, #8bc34a);
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        .items-list {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .items-header {
-            background: #667eea;
-            color: white;
-            padding: 15px 20px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        
-        .item-card {
-            padding: 15px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-        }
-        
-        .item-card:last-child {
-            border-bottom: none;
-        }
-        
-        .item-card.completed {
-            background: #f1f8f4;
-        }
-        
-        .item-card.partial {
-            background: #fff8e1;
-        }
-        
-        .item-card.pending {
-            background: #fff;
-        }
-        
-        .item-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        
-        .item-status {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-        
-        .item-status.completed { background: #4caf50; }
-        .item-status.partial { background: #ff9800; }
-        .item-status.pending { background: #e0e0e0; }
-        
-        .item-name {
-            flex: 1;
-            font-weight: bold;
-            font-size: 16px;
-            color: #333;
-        }
-        
-        .item-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-left: 42px;
-        }
-        
-        .item-quantity {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .item-quantity .current {
-            font-weight: bold;
-            font-size: 18px;
-            color: #333;
-        }
-        
-        .scan-button {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 560px;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-            cursor: pointer;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .scan-button:active {
-            transform: translateX(-50%) scale(0.98);
-        }
-        
-        .camera-view {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-        
-        .camera-view.active {
-            display: flex;
-        }
-        
-        .camera-header {
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .camera-close {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 10px;
-        }
-        
-        #video {
-            flex: 1;
-            width: 100%;
-            object-fit: cover;
-        }
-        
-        .scan-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 300px;
-            height: 200px;
-            border: 3px solid #4caf50;
-            border-radius: 10px;
-            pointer-events: none;
-        }
-        
-        .scan-result {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            z-index: 3000;
-            display: none;
-            text-align: center;
-            max-width: 90%;
-        }
-        
-        .scan-result.show {
-            display: block;
-            animation: popIn 0.3s ease;
-        }
-        
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        
-        .scan-result .icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-        
-        .scan-result .message {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .scan-result .details {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-        
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WM Scan — reguły + baza EAN</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#f5f7fb;padding:12px}
+  .card{background:#fff;border-radius:10px;padding:14px;max-width:980px;margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+  h1{font-size:18px;margin-bottom:8px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .col{flex:1;min-width:260px}
+  .upload{border:2px dashed #7b61ff;padding:14px;border-radius:8px;text-align:center;cursor:pointer}
+  .btn{padding:10px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
+  .btn-primary{background:linear-gradient(90deg,#667eea,#764ba2);color:#fff}
+  .small{font-size:13px;color:#666;margin-top:8px}
+  textarea{width:100%;height:110px;padding:8px;border-radius:8px;border:1px solid #e6e6e6}
+  .list{background:#fbfbff;padding:8px;border-radius:8px;border:1px solid #eee;height:120px;overflow:auto}
+  .status{padding:10px;border-radius:8px;margin:10px 0}
+  .info{background:#e8f3ff;color:#0b63c6}
+  .error{background:#ffecec;color:#c62828}
+  .items{margin-top:10px}
+  .item{padding:8px;border-radius:8px;border-left:4px solid #eee;margin-bottom:8px;background:#fff}
+  .controls{display:flex;gap:8px;align-items:center}
+  .kbd{background:#f0f0f0;padding:4px 8px;border-radius:6px}
+  footer{font-size:12px;color:#666;margin-top:14px;text-align:center}
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <h1>📦 Weryfikacja WM</h1>
-        <div class="subtitle">Mobilny skaner magazynowy</div>
-    </div>
-    
-    <!-- Container -->
-    <div class="container">
-        <!-- WM Selector -->
-        <div class="wm-selector" id="wmSelector">
-            <h2>🔍 Wybierz dokument WM</h2>
-            <div class="wm-input">
-                <input type="text" id="wmInput" placeholder="WM-xxxx" value="WM-690">
-                <button onclick="loadWM()">Załaduj</button>
-            </div>
-            <div class="recent-wm">
-                <button onclick="quickLoadWM('WM-690')">WM-690</button>
-                <button onclick="quickLoadWM('WM-4126')">WM-4126</button>
-                <button onclick="quickLoadWM('WM-1848')">WM-1848</button>
-            </div>
+  <div class="card">
+    <h1>📦 WM Scanner — Reguły & Baza EAN</h1>
+    <div class="status info">Otwórz przez HTTPS. Najpierw wgraj plik WM, opcjonalnie bazę produktów (EAN). Reguły możesz dostosować.</div>
+
+    <div class="row">
+      <div class="col">
+        <div class="upload" id="wmZone" onclick="document.getElementById('wmFile').click()">
+          <div style="font-size:28px">📄</div>
+          <div style="font-weight:700">Plik WM (Excel)</div>
+          <div class="small">Wczytywane kolumny: <strong>Kod</strong> i <strong>Ilość</strong>. (Nagłówki mogą być w 2. wierszu)</div>
         </div>
-        
-        <!-- Stats (hidden initially) -->
-        <div class="stats-card hidden" id="statsCard">
-            <div class="stats-grid">
-                <div class="stat-item success">
-                    <div class="stat-value" id="statCompleted">0</div>
-                    <div class="stat-label">Wydane</div>
-                </div>
-                <div class="stat-item pending">
-                    <div class="stat-value" id="statPending">0</div>
-                    <div class="stat-label">Pozostałe</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="statTotal">0</div>
-                    <div class="stat-label">Razem</div>
-                </div>
-            </div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
-            </div>
+        <input id="wmFile" type="file" accept=".xls,.xlsx,.xlsm" style="display:none" onchange="onWM(this.files[0])" />
+        <div id="wmInfo" style="display:none;margin-top:8px" class="list"></div>
+
+        <div style="height:12px"></div>
+
+        <div class="upload" id="dbZone" onclick="document.getElementById('dbFile').click()">
+          <div style="font-size:28px">🗂️</div>
+          <div style="font-weight:700">Baza produktów (Excel)</div>
+          <div class="small">Format: kolumna A = Nazwa Towaru, kolumna B = Kod EAN (może być wiele powtórzeń dla jednej nazwy)</div>
         </div>
-        
-        <!-- Items List (hidden initially) -->
-        <div class="items-list hidden" id="itemsList">
-            <div class="items-header" id="itemsHeader">📋 Pozycje dokumentu</div>
-            <div id="itemsContainer"></div>
+        <input id="dbFile" type="file" accept=".xls,.xlsx,.xlsm" style="display:none" onchange="onDB(this.files[0])" />
+        <div id="dbInfo" style="display:none;margin-top:8px" class="list"></div>
+
+        <div style="height:8px"></div>
+
+        <div class="controls">
+          <button class="btn btn-primary" id="processBtn" onclick="processWM()" disabled>🚀 Przygotuj weryfikację</button>
+          <button class="btn" onclick="resetAll()">🔄 Nowy</button>
         </div>
-    </div>
-    
-    <!-- Scan Button (hidden initially) -->
-    <button class="scan-button hidden" id="scanButton" onclick="startScanning()">
-        📷 Skanuj kolejny kod
-    </button>
-    
-    <!-- Camera View -->
-    <div class="camera-view" id="cameraView">
-        <div class="camera-header">
-            <h2>Skanowanie kodu</h2>
-            <button class="camera-close" onclick="stopScanning()">✕</button>
+
+        <div id="error" class="status error" style="display:none"></div>
+      </div>
+
+      <div class="col">
+        <div style="font-weight:700;margin-bottom:6px">⚙️ Reguły (edytowalne — zapisane lokalnie)</div>
+
+        <div style="margin-bottom:8px">
+          <label class="small">Reguły konwersji (z → na) — jedną regułę na linię, format: <code>-2ZR=>ZZ</code></label>
+          <textarea id="convText"></textarea>
         </div>
-        <video id="video" autoplay playsinline></video>
-        <div class="scan-overlay"></div>
+
+        <div style="margin-bottom:8px">
+          <label class="small">Reguły mnożenia (wzorzec => mnożnik) np: <code> ;10 ks/pc=>10</code></label>
+          <textarea id="multText"></textarea>
+        </div>
+
+        <div style="margin-bottom:8px">
+          <label class="small">Przedrostki do usunięcia (jeden na linii) — np: <code>ZVL SLOVAKIA a.s.;</code></label>
+          <textarea id="prefixText"></textarea>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveRules()">💾 Zapisz reguły</button>
+          <button class="btn" onclick="loadDefaultRules()">🔁 Załaduj domyślne</button>
+        </div>
+
+        <div class="small" style="margin-top:8px;color:#444">
+          Źródło domyślnych reguł: plik konfiguracyjny projektu. (przykładowe reguły: <code>-2ZR=> ZZ</code>, <code>;10 ks/pc=>10</code>). Źródło: :contentReference[oaicite:1]{index=1}
+        </div>
+      </div>
     </div>
-    
-    <!-- Scan Result Popup -->
-    <div class="scan-result" id="scanResult">
-        <div class="icon" id="resultIcon">✅</div>
-        <div class="message" id="resultMessage">Zeskanowano!</div>
-        <div class="details" id="resultDetails"></div>
+
+    <!-- Weryfikacja / lista -->
+    <div style="margin-top:12px" id="verifyCard" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong id="wmTitle">WM</strong></div>
+        <div><button class="btn" onclick="downloadResults()">💾 Pobierz wyniki (JSON)</button></div>
+      </div>
+
+      <div class="status info" id="verifyStatus">Gotowy do skanowania</div>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px;padding:10px;background:#f1fbf6;border-radius:8px">
+          <div style="font-weight:700" id="statDone">0</div>
+          <div class="small">Wydane</div>
+        </div>
+        <div style="flex:1;min-width:180px;padding:10px;background:#fff7e0;border-radius:8px">
+          <div style="font-weight:700" id="statPending">0</div>
+          <div class="small">Pozostałe</div>
+        </div>
+        <div style="flex:1;min-width:180px;padding:10px;background:#f3f4f6;border-radius:8px">
+          <div style="font-weight:700" id="statTotal">0</div>
+          <div class="small">Razem</div>
+        </div>
+      </div>
+
+      <div class="items" id="itemsList"></div>
+
+      <div style="height:12px"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" id="scanBtn" onclick="startScanning()" style="display:none">📷 Skanuj</button>
+        <button class="btn" onclick="stopScanning()" style="display:none" id="stopScan">⏹ Stop</button>
+      </div>
     </div>
-    
-    <!-- ZXing Library for barcode scanning -->
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
-    
-    <script>
-        // Demo data - symulacja bazy danych
-        const DEMO_DATA = {
-            'WM-690': [
-                { id: 1, name: 'Lozysko stozkowe 30222 J2', ean: '7316577327024', required: 6.0, scanned: 0 },
-                { id: 2, name: 'PHG XPA1250EP', ean: '7316579573795', required: 5.0, scanned: 0 },
-                { id: 3, name: 'PHG AX28EP', ean: '7316579570084', required: 5.0, scanned: 0 },
-                { id: 4, name: 'PHG XPA1000EP', ean: '7316579573658', required: 1.0, scanned: 0 },
-                { id: 5, name: '6203-2RSR C3', ean: '7316577008091', required: 2.0, scanned: 0 }
-            ],
-            'WM-4126': [
-                { id: 1, name: 'Pas klinowy PHG XPA1250EP', ean: '7316579573795', required: 5.0, scanned: 0 },
-                { id: 2, name: 'Pas klinowy PHG AX28EP', ean: '7316579570084', required: 5.0, scanned: 0 },
-                { id: 3, name: 'PHG XPA1000EP', ean: '7316579573658', required: 1.0, scanned: 0 }
-            ],
-            'WM-1848': [
-                { id: 1, name: '6001-2ZR C3', ean: '7316577002501', required: 3.0, scanned: 0 },
-                { id: 2, name: 'ZVL SLOVAKIA 6203-2RSR C3', ean: 'N/A', required: 5.0, scanned: 0 },
-                { id: 3, name: 'ZVL SLOVAKIA 6201-2RSR C3', ean: 'N/A', required: 4.0, scanned: 0 }
-            ]
-        };
-        
-        let currentWM = null;
-        let currentItems = [];
-        let codeReader = null;
-        let scanning = false;
-        
-        // Load WM data
-        function loadWM() {
-            const wmNumber = document.getElementById('wmInput').value.trim().toUpperCase();
-            
-            if (!wmNumber) {
-                alert('Wpisz numer WM!');
-                return;
-            }
-            
-            if (!DEMO_DATA[wmNumber]) {
-                alert(`Nie znaleziono dokumentu: ${wmNumber}\n\nDostępne demo:\n- WM-690\n- WM-4126\n- WM-1848`);
-                return;
-            }
-            
-            currentWM = wmNumber;
-            currentItems = JSON.parse(JSON.stringify(DEMO_DATA[wmNumber])); // Deep copy
-            
-            renderItems();
-            updateStats();
-            
-            // Show elements
-            document.getElementById('statsCard').classList.remove('hidden');
-            document.getElementById('itemsList').classList.remove('hidden');
-            document.getElementById('scanButton').classList.remove('hidden');
-            
-            // Update header
-            document.getElementById('itemsHeader').textContent = `📋 ${wmNumber} - Pozycje dokumentu`;
-        }
-        
-        function quickLoadWM(wmNumber) {
-            document.getElementById('wmInput').value = wmNumber;
-            loadWM();
-        }
-        
-        // Render items
-        function renderItems() {
-            const container = document.getElementById('itemsContainer');
-            container.innerHTML = '';
-            
-            currentItems.forEach(item => {
-                const status = item.scanned >= item.required ? 'completed' : 
-                              item.scanned > 0 ? 'partial' : 'pending';
-                
-                const statusIcon = status === 'completed' ? '✅' :
-                                  status === 'partial' ? '⏳' : '❌';
-                
-                const card = document.createElement('div');
-                card.className = `item-card ${status}`;
-                card.innerHTML = `
-                    <div class="item-header">
-                        <div class="item-status ${status}">${statusIcon}</div>
-                        <div class="item-name">${item.name}</div>
-                    </div>
-                    <div class="item-info">
-                        <div class="item-quantity">
-                            <span class="current">${item.scanned}</span> / ${item.required}
-                        </div>
-                        <div style="font-size: 12px; color: #999;">
-                            ${item.ean !== 'N/A' ? `EAN: ${item.ean}` : 'Kod QR'}
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-        
-        // Update statistics
-        function updateStats() {
-            const completed = currentItems.filter(i => i.scanned >= i.required).length;
-            const total = currentItems.length;
-            const pending = total - completed;
-            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-            
-            document.getElementById('statCompleted').textContent = completed;
-            document.getElementById('statPending').textContent = pending;
-            document.getElementById('statTotal').textContent = total;
-            
-            const progressFill = document.getElementById('progressFill');
-            progressFill.style.width = progress + '%';
-            progressFill.textContent = progress + '%';
-        }
-        
-        // Start scanning
-        async function startScanning() {
-            if (scanning) return;
-            
-            scanning = true;
-            document.getElementById('cameraView').classList.add('active');
-            
-            try {
-                codeReader = new ZXing.BrowserMultiFormatReader();
-                
-                const videoElement = document.getElementById('video');
-                
-                await codeReader.decodeFromVideoDevice(null, videoElement, (result, err) => {
-                    if (result) {
-                        handleScan(result.text);
-                    }
-                });
-            } catch (err) {
-                console.error('Camera error:', err);
-                alert('Nie można uruchomić kamery. Sprawdź uprawnienia.');
-                stopScanning();
-            }
-        }
-        
-        // Stop scanning
-        function stopScanning() {
-            scanning = false;
-            document.getElementById('cameraView').classList.remove('active');
-            
-            if (codeReader) {
-                codeReader.reset();
-                codeReader = null;
-            }
-        }
-        
-        // Handle scanned code
-        function handleScan(code) {
-            console.log('Scanned:', code);
-            
-            // Find item by EAN
-            const item = currentItems.find(i => i.ean === code);
-            
-            if (!item) {
-                showScanResult('❌', 'Nieznany kod', `EAN: ${code}\n\nTen kod nie należy do dokumentu ${currentWM}`);
-                setTimeout(() => hideScanResult(), 2000);
-                return;
-            }
-            
-            // Update scanned quantity
-            if (item.scanned < item.required) {
-                item.scanned += 1;
-                
-                const remaining = item.required - item.scanned;
-                const message = item.scanned >= item.required ? 
-                    'Pozycja kompletna!' : 
-                    `Zeskanowano: ${item.scanned}/${item.required}`;
-                const details = item.scanned >= item.required ?
-                    `✅ ${item.name}` :
-                    `⏳ ${item.name}\nPozostało: ${remaining} szt`;
-                
-                showScanResult('✅', message, details);
-                
-                // Update UI
-                renderItems();
-                updateStats();
-                
-                // Vibrate
-                if (navigator.vibrate) {
-                    navigator.vibrate(100);
-                }
-                
-                // Auto-hide after 1.5s and continue scanning
-                setTimeout(() => {
-                    hideScanResult();
-                }, 1500);
-            } else {
-                showScanResult('⚠️', 'Już wydane', `${item.name}\n\nTa pozycja jest już kompletna (${item.required}/${item.required})`);
-                setTimeout(() => hideScanResult(), 2000);
-            }
-        }
-        
-        function showScanResult(icon, message, details) {
-            document.getElementById('resultIcon').textContent = icon;
-            document.getElementById('resultMessage').textContent = message;
-            document.getElementById('resultDetails').textContent = details;
-            document.getElementById('scanResult').classList.add('show');
-        }
-        
-        function hideScanResult() {
-            document.getElementById('scanResult').classList.remove('show');
-        }
-        
-        // Keyboard shortcuts for testing (desktop)
-        document.addEventListener('keypress', (e) => {
-            if (!currentWM) return;
-            
-            // Simulate scanning with number keys
-            const key = e.key;
-            if (key >= '1' && key <= '9') {
-                const index = parseInt(key) - 1;
-                if (index < currentItems.length) {
-                    const item = currentItems[index];
-                    if (item.ean !== 'N/A') {
-                        handleScan(item.ean);
-                    }
-                }
-            }
+
+  <footer>Plik oparty na regułach z Twojego projektu. Możesz edytować reguły i załadować własną bazę EAN.</footer>
+  </div>
+
+<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+<script>
+/* ---------- DOM / stan ---------- */
+let wmFile=null, dbFile=null;
+let wmRows = [];            // obiekty {Kod, Ilość}
+let productDB = {};        // {nazwa: [ean1, ean2,...]} oraz ean->nazwa pomocnicza
+let eanToName = {};
+let items = [];            // lista pozycji z WM: {code, required, scanned}
+let codeReader=null, scanning=false;
+
+/* ---------- Domyślne reguły (wzięte z Twojego pliku jako wartości startowe) ---------- */
+const DEFAULT_CONV = [['-2ZR',' ZZ'],['-2RS',' 2RS'],['2RSR','2RS']];
+const DEFAULT_MULT = [[';10 ks/pc',10],[';20 ks/pc',20],[';50 ks/pc',50],[';100 ks/pc',100]];
+const DEFAULT_PREFIXES = ['ZVL SLOVAKIA a.s.;','ZVL-O','ZVL-o'];
+
+/* ---------- Helpers ---------- */
+const norm = s => (s||'').toString().trim();
+const normalizeKey = s => (s||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'');
+
+/* ---------- UI init: wczytaj reguły z localStorage ---------- */
+function initRules(){
+  const conv = localStorage.getItem('wm_conv');
+  const mult = localStorage.getItem('wm_mult');
+  const prefixes = localStorage.getItem('wm_prefixes');
+
+  if(conv) document.getElementById('convText').value = conv;
+  else document.getElementById('convText').value = DEFAULT_CONV.map(r=>r.join('=>')).join('\\n');
+
+  if(mult) document.getElementById('multText').value = mult;
+  else document.getElementById('multText').value = DEFAULT_MULT.map(r=>r.join('=>')).join('\\n');
+
+  if(prefixes) document.getElementById('prefixText').value = prefixes;
+  else document.getElementById('prefixText').value = DEFAULT_PREFIXES.join('\\n');
+}
+initRules();
+
+function saveRules(){
+  localStorage.setItem('wm_conv', document.getElementById('convText').value);
+  localStorage.setItem('wm_mult', document.getElementById('multText').value);
+  localStorage.setItem('wm_prefixes', document.getElementById('prefixText').value);
+  alert('Reguły zapisane lokalnie.');
+}
+function loadDefaultRules(){
+  document.getElementById('convText').value = DEFAULT_CONV.map(r=>r.join('=>')).join('\\n');
+  document.getElementById('multText').value = DEFAULT_MULT.map(r=>r.join('=>')).join('\\n');
+  document.getElementById('prefixText').value = DEFAULT_PREFIXES.join('\\n');
+}
+
+/* ---------- Parsowanie reguł z textarea ---------- */
+function getConversionRules(){
+  const lines = document.getElementById('convText').value.split('\\n').map(l=>l.trim()).filter(Boolean);
+  return lines.map(l=>{
+    const [a,b] = l.split('=>');
+    return [a||'', b||''];
+  });
+}
+function getMultiplierRules(){
+  const lines = document.getElementById('multText').value.split('\\n').map(l=>l.trim()).filter(Boolean);
+  return lines.map(l=>{
+    const [pattern,m] = l.split('=>');
+    return [pattern||'', parseFloat(m||1)];
+  });
+}
+function getPrefixes(){
+  return document.getElementById('prefixText').value.split('\\n').map(l=>l.trim()).filter(Boolean);
+}
+
+/* ---------- Wczytywanie WM (kolumny Kod i Ilość) ---------- */
+async function onWM(f){
+  wmFile = f;
+  document.getElementById('wmInfo').style.display='block';
+  document.getElementById('wmInfo').textContent = 'Załadowano: ' + f.name;
+  document.getElementById('processBtn').disabled = false;
+}
+
+/* ---------- Wczytywanie bazy produktów (kol A = nazwa, kol B = EAN) ---------- */
+async function onDB(f){
+  dbFile = f;
+  document.getElementById('dbInfo').style.display='block';
+  document.getElementById('dbInfo').textContent = 'Załadowano baza: ' + f.name + ' (kliknij Przygotuj)';
+}
+
+/* ---------- Czytanie excela pomocniczo (header detection) ---------- */
+async function readExcelRows(file){
+  return new Promise((res,rej)=>{
+    const fr = new FileReader();
+    fr.onload = e=>{
+      try{
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type:'array'});
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const raw = XLSX.utils.sheet_to_json(sheet, {header:1, blankrows:false});
+        res(raw);
+      }catch(err){ rej(err); }
+    };
+    fr.onerror = ()=>rej(new Error('read error'));
+    fr.readAsArrayBuffer(file);
+  });
+}
+
+/* ---------- Przygotuj weryfikację: wczytaj WM, wczytaj baze opcjonalnie, utwórz items ---------- */
+async function processWM(){
+  clearError();
+  if(!wmFile){ showError('Wybierz plik WM'); return; }
+
+  try{
+    const convRules = getConversionRules();
+    const multRules = getMultiplierRules();
+    const prefixes = getPrefixes();
+
+    // 1) wczytaj WM (tablica)
+    const raw = await readExcelRows(wmFile);
+
+    // znajdź wiersz nagłówków zawierający 'kod' i 'ilo' heurystycznie
+    let headerI = -1;
+    for(let i=0;i<Math.min(6,raw.length);i++){
+      const row = raw[i].map(c=> (c||'').toString().toLowerCase());
+      if(row.some(c=>c.includes('kod')) && row.some(c=>c.includes('ilo'))){ headerI = i; break; }
+    }
+    if(headerI === -1) {
+      showError('Nie znaleziono nagłówków (Kod, Ilość) w WM');
+      return;
+    }
+    const headers = raw[headerI].map(h=> (h||'').toString());
+    const rows = raw.slice(headerI+1);
+
+    // Zidentyfikuj indeksy Kolumn Kod i Ilość
+    let kodIdx=-1, iloscIdx=-1;
+    headers.forEach((h,i)=>{
+      const n = normalizeKey(h);
+      if(kodIdx===-1 && n.includes('kod')) kodIdx=i;
+      if(iloscIdx===-1 && (n.includes('ilosc') || n.includes('ilo') || n.includes('qty'))) iloscIdx=i;
+    });
+    if(kodIdx===-1 || iloscIdx===-1){
+      showError('Nie wykryto kolumn "Kod" i/lub "Ilość" w WM');
+      return;
+    }
+
+    // Zbuduj obiekty items
+    items=[];
+    for(const r of rows){
+      const rawKod = r[kodIdx];
+      const rawQty = r[iloscIdx];
+      if(rawKod==null || rawQty==null) continue;
+      const qty = parseFloat(String(rawQty).replace(',','.')) || 0;
+      if(qty <= 0) continue;
+      const code = String(rawKod).trim();
+      items.push({ code: code, required: qty, scanned: 0 });
+    }
+
+    if(items.length===0){ showError('Brak pozycji w WM'); return; }
+
+    // 2) wczytaj bazę produktów (jeśli jest)
+    productDB = {}; eanToName = {};
+    if(dbFile){
+      const rawdb = await readExcelRows(dbFile);
+      // znajdź wiersz nagłówków, ale przyjmujemy: kol A nazwa, kol B ean (bez nagłówków też ok)
+      // Po prostu iterujemy wiersze i odrzucamy puste / nagłówki
+      for(const r of rawdb){
+        if(!r || r.length < 2) continue;
+        const a = (r[0]||'').toString().trim();
+        const b = (r[1]||'').toString().trim();
+        if(!a || !b) continue;
+        // usuń przypadkowe nagłówki
+        if(/nazwa|kod|ean|name/i.test(a) && /ean|kod|code/i.test(b)) continue;
+        // ean może być w formie '731657...;731657...'
+        const eans = String(b).split(/[;,\\s]+/).map(x=>x.trim()).filter(Boolean);
+        if(!productDB[a]) productDB[a] = [];
+        eans.forEach(e=>{
+          productDB[a].push(e);
+          eanToName[e] = a;
         });
-        
-        // Auto-load demo on start
-        window.addEventListener('load', () => {
-            // Auto-load WM-690 for demo
-            setTimeout(() => {
-                quickLoadWM('WM-690');
-            }, 500);
-        });
-    </script>
+      }
+    }
+
+    // zapisz aktywne reguły do stanu (użyte przy skanowaniu)
+    window._RULES = { conv: convRules, mult: multRules, prefixes: prefixes, normalizeSpaces:true };
+
+    // Render UI
+    document.getElementById('verifyCard').style.display='block';
+    document.getElementById('wmTitle').textContent = '📦 '+ (wmFile.name || 'WM');
+    renderItems();
+    updateStats();
+    document.getElementById('scanBtn').style.display='inline-block';
+    document.getElementById('processBtn').disabled = true;
+    document.getElementById('verifyStatus').textContent = 'Gotowy do skanowania';
+  }catch(err){
+    console.error(err);
+    showError('Błąd przetwarzania: '+ (err.message||err));
+  }
+}
+
+/* ---------- Render listy ---------- */
+function renderItems(){
+  const cont = document.getElementById('itemsList'); cont.innerHTML='';
+  items.forEach(it=>{
+    const div = document.createElement('div'); div.className='item';
+    div.innerHTML = `<div style="display:flex;justify-content:space-between">
+      <div><strong>${escapeHtml(it.code)}</strong></div>
+      <div>${it.scanned} / ${it.required}</div>
+    </div>`;
+    cont.appendChild(div);
+  });
+}
+function updateStats(){
+  const total = items.length;
+  const done = items.filter(i=>i.scanned>=i.required).length;
+  const pending = total - done;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statPending').textContent = pending;
+}
+
+/* ---------- Skaner: ZXing ---------- */
+async function startScanning(){
+  if(scanning) return;
+  if(!window._RULES) { showError('Najpierw przygotuj weryfikację (Przycisk Przygotuj)'); return; }
+  scanning=true;
+  document.getElementById('scanBtn').style.display='none';
+  document.getElementById('stopScan').style.display='inline-block';
+  document.getElementById('verifyStatus').textContent='Skanowanie... (nakieruj kamerę)';
+
+  // overlay video
+  const overlay = document.createElement('div'); overlay.id='scanOverlay';
+  overlay.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column';
+  const video = document.createElement('video'); video.id='scanVideo'; video.style.width='92%'; video.style.maxWidth='720px'; video.style.borderRadius='8px';
+  const hint = document.createElement('div'); hint.style.color='#fff'; hint.style.margin='12px'; hint.innerText='📷 Nakieruj kamerę na kod';
+  overlay.appendChild(video); overlay.appendChild(hint); document.body.appendChild(overlay);
+
+  if(!codeReader) codeReader = new ZXing.BrowserMultiFormatReader();
+  try{
+    const devices = await codeReader.listVideoInputDevices();
+    let selected = devices[0]?.deviceId;
+    if(devices.length>1){
+      const back = devices.find(d=>/back|rear|tyl|tyln/i.test(d.label));
+      if(back) selected = back.deviceId;
+    }
+    codeReader.decodeFromVideoDevice(selected, video, (result, err) => {
+      if(result){
+        const code = result.text;
+        stopScanning(); // krótkie zatrzymanie na jedno odczytanie
+        handleScanned(code);
+      }
+    });
+  }catch(e){
+    console.error(e);
+    showError('Błąd kamery / brak uprawnień');
+    stopScanning();
+  }
+}
+function stopScanning(){
+  scanning=false;
+  document.getElementById('scanBtn').style.display='inline-block';
+  document.getElementById('stopScan').style.display='none';
+  try{ if(codeReader) codeReader.reset(); }catch(e){}
+  const overlay=document.getElementById('scanOverlay'); if(overlay) overlay.remove();
+  document.getElementById('verifyStatus').textContent='Gotowy do skanowania';
+}
+
+/* ---------- Czyszczenie kodu zgodnie z regułami ---------- */
+function cleanScannedCode(raw, isScanner=true){
+  let kod = String(raw||'').trim();
+  // usuń znane prefixy (z listy)
+  const prefixes = window._RULES?.prefixes || [];
+  prefixes.forEach(p=>{
+    if(kod.toUpperCase().startsWith(p.toUpperCase())) kod = kod.substring(p.length).trim();
+  });
+  // usuń specyficzne warianty
+  kod = kod.replace(/ZVL-O/ig,'').replace(/ZVL-o/ig,'').trim();
+  if(isScanner){
+    // apply conversion rules
+    (window._RULES?.conv||[]).forEach(([from,to])=>{
+      if(from) kod = kod.split(from).join(to);
+    });
+    // multiplier detection (leave pattern in code for later if needed)
+    (window._RULES?.mult||[]).forEach(([pattern,m])=>{
+      if(kod.includes(pattern)) {
+        // remove pattern and multiply - we return [code, multiplier]
+      }
+    });
+  }
+  if(window._RULES?.normalizeSpaces) kod = kod.replace(/\s+/g,'');
+  return kod;
+}
+
+/* ---------- Register scanned code (with multiplier support) ---------- */
+function handleScanned(codeRaw){
+  const cleaned = cleanScannedCode(codeRaw, true);
+
+  // check multiplier rules
+  let multiplier = 1;
+  (window._RULES?.mult||[]).forEach(([pattern,m])=>{
+    if(cleaned.includes(pattern)){
+      multiplier = m;
+      // strip the pattern from code used for matching
+      cleaned = cleaned.split(pattern).join('').trim();
+    }
+  });
+
+  // Try to match by EAN to items OR by code equals item.code
+  let found=false;
+  for(const it of items){
+    // direct match: scanned equals code OR if productDB loaded check ean->name mapping
+    if(it.code === cleaned || it.code === codeRaw){
+      // increment
+      it.scanned += multiplier;
+      if(it.scanned > it.required) it.scanned = it.required;
+      found=true; break;
+    }
+    // if we have eanToName mapping: if scanned is EAN and item.code equals name or code
+    if(eanToName[cleaned]){
+      // if the item code equals that product name or equals that EAN, count
+      const name = eanToName[cleaned];
+      if(it.code === name || it.code === cleaned){
+        it.scanned += multiplier;
+        if(it.scanned > it.required) it.scanned = it.required;
+        found=true; break;
+      }
+    }
+  }
+
+  if(found){
+    renderItems(); updateStats();
+    showToast('✅ Zarejestrowano: '+cleaned);
+  } else {
+    showToast('❌ Nieznany kod: '+cleaned);
+  }
+}
+
+/* ---------- Download results/porównanie z bazą ---------- */
+function downloadResults(){
+  // jeśli mamy productDB: zrób porównanie podobne do compare_with_database
+  const scannerEANCounts = {};
+  items.forEach(it=>{
+    // assume item.ean is same as item.code if we used code=EAN
+    // collect scanned codes: if we matched via eanToName, they were recorded in item.scanned
+  });
+
+  // Prosty wynik: lista items
+  const results = {
+    wm: wmFile?wmFile.name:null,
+    timestamp: new Date().toISOString(),
+    items: items.map(i=>({code:i.code, required:i.required, scanned:i.scanned, missing:Math.max(0,i.required-i.scanned)}))
+  };
+
+  const blob = new Blob([JSON.stringify(results,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(wmFile?wmFile.name.replace(/\\..+$/,''):'WM')+'_wyniki.json'; a.click();
+}
+
+/* ---------- Utils ---------- */
+function showError(msg){ const e=document.getElementById('error'); e.style.display='block'; e.textContent=msg; }
+function clearError(){ const e=document.getElementById('error'); e.style.display='none'; e.textContent=''; }
+function showToast(msg){ const t=document.createElement('div'); t.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:70px;background:rgba(0,0,0,.85);color:#fff;padding:10px;border-radius:8px;z-index:99999'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function resetAll(){ wmFile=null; dbFile=null; wmRows=[]; productDB={}; eanToName={}; items=[]; document.getElementById('wmInfo').style.display='none'; document.getElementById('dbInfo').style.display='none'; document.getElementById('verifyCard').style.display='none'; document.getElementById('processBtn').disabled=true; clearError(); }
+
+/* keyboard shortcuts for testing */
+document.addEventListener('keydown', e=>{
+  if(e.key==='s' || e.key==='S') startScanning();
+  if(e.key==='Escape') stopScanning();
+});
+</script>
 </body>
 </html>
